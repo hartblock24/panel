@@ -49,10 +49,10 @@ echo '{
   "up_mbps": 100,
   "down_mbps": 100,
   "disable_udp": false,
-  "obfs": "moson",
+  "obfs": "digitel",
   "auth": {
     "mode": "passwords",
-    "config": ["freemoson", "firenetdev"]
+    "config": ["digitelsystem", "firenetdev"]
   }
 }
 ' >> /etc/hysteria/config.json
@@ -72,8 +72,8 @@ apt remove apache2 -y
 domain=$(cat /root/domain)
 curl  https://get.acme.sh | sh
 ~/.acme.sh/acme.sh --register-account -m ${CF_ID} --server zerossl
-~/.acme.sh/acme.sh --issue -d ${domain} --standalone -k ec-256
-~/.acme.sh/acme.sh --installcert -d ${domain} --fullchainpath /etc/hysteria/hysteria.crt --keypath /etc/hysteria/hysteria.key --ecc
+~/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256
+~/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /etc/hysteria/hysteria.crt --keypath /etc/hysteria/hysteria.key --ecc
 }
 }
 
@@ -106,9 +106,9 @@ clear
 echo 'Installing proxy.'
 {
 sudo apt install -y squid
-cd /etc/squid/
+cd /etc/squid/ || exit
 rm squid.conf
-echo "acl SSH dst `ip route get 8.8.8.8 | awk '/src/ {f=NR} f&&NR-1==f' RS=" "`" >> squid.conf
+echo "acl SSH dst $(ip route get 8.8.8.8 | awk '/src/ {f=NR} f&&NR-1==f' RS=" ")" >> squid.conf
 echo 'acl SSL_ports port 443
 acl Safe_ports port 80
 acl Safe_ports port 21
@@ -171,7 +171,7 @@ clear
 echo 'Starting..'
 {
 
-sudo crontab -l | { echo "7 0 * * * "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" > /dev/null"; } | crontab -
+sudo crontab -l | { echo "7 0 * * * /root/.acme.sh/acme.sh --cron --home /root/.acme.sh > /dev/null"; } | crontab -
 sudo systemctl restart cron
 } &>/dev/null
 clear
